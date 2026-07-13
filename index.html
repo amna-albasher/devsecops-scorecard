@@ -308,7 +308,11 @@ async function startScan(){
     w.path?.toLowerCase().includes('trivy') ||
     w.path?.toLowerCase().includes('security')
   );
-  const hasSecurityWorkflow = hasTrivy || workflowList.length > 2;
+  // Also check if deploy workflow contains trivy by fetching workflow file
+  const deployWorkflow = await gh(`/repos/${repo}/contents/.github/workflows/deploy.yml`);
+  const workflowContent = deployWorkflow?.content ? atob(deployWorkflow.content) : '';
+  const workflowHasTrivy = workflowContent.toLowerCase().includes('trivy');
+  const hasSecurityWorkflow = hasTrivy || workflowHasTrivy || workflowList.length > 2;
   const githubNames = Array.isArray(githubDir) ? githubDir.map(f=>f.name.toLowerCase()) : [];
 
   setStep('Building scorecard...', 92);
@@ -354,14 +358,14 @@ async function startScan(){
         {pass:hasSecurityWorkflow, label:hasSecurityWorkflow?'Dedicated security scanning workflow detected (Trivy)':'Consider a dedicated security scanning workflow', sev:'warn'},
         {pass:releaseCount>0, label:releaseCount>0?`${releaseCount} tagged release(s) with versioning`:'No tagged releases versioning not enforced', sev:'warn'},
         {pass:hasDependabot, label:hasDependabot?'Dependabot configured for dependency updates':'No Dependabot dependencies not auto-updated', sev:'warn'},
-        {pass:openIssues<100||stars>1000, label:openIssues<50?`${openIssues} open issues well maintained`:`${openIssues} open issues maintenance backlog`, sev:'warn'},
+        {pass:openIssues<100||stars>1000, label:openIssues<50?`${openIssues} open issues, well maintained`:`${openIssues} open issues maintenance backlog`, sev:'warn'},
       ]
     },
     {
       name:'Branch Protection', color:'#7C3AED', bgColor:'#F5F3FF',
       icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>`,
       checks:[
-        {pass:hasBranchProtection, label:hasBranchProtection?'Branch protection rules active':'Branch protection not detected', sev:'fail'},
+        {pass:hasBranchProtection, label:hasBranchProtection?'Branch protection rules enabled':'Branch protection not detected', sev:'fail'},
         {pass:hasCODEOWNERS, label:hasCODEOWNERS?'CODEOWNERS file present':'No CODEOWNERS file found', sev:'fail'},
         {pass:hasWorkflows, label:hasWorkflows?'Status checks available for PRs':'No status checks to enforce on PRs', sev:'warn'},
         {pass:forks>0||stars>10, label:forks>0?`${forks} forks active collaboration`:'Low fork count', sev:'warn'},
@@ -371,7 +375,7 @@ async function startScan(){
       name:'Secrets & Config', color:'#D97706', bgColor:'#FFFBEB',
       icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`,
       checks:[
-        {pass:hasGitignoreConfirmed, label:hasGitignoreConfirmed?'.gitignore present secrets excluded':'No .gitignore credentials at risk', sev:'fail'},
+        {pass:hasGitignoreConfirmed, label:hasGitignoreConfirmed?'.gitignore present, secrets excluded':'No .gitignore, credentials at risk', sev:'fail'},
         {pass:!hasEnvFile, label:!hasEnvFile?'No .env file in repository root':'WARNING: .env file detected in repository root', sev:'fail'},
         {pass:hasGithubDir, label:hasGithubDir?'.github directory present':'No .github directory for secrets configuration', sev:'warn'},
         {pass:hasWorkflows, label:hasWorkflows?'CI pipeline available for secret scanning':'No pipeline for automated secret detection', sev:'warn'},
@@ -394,8 +398,8 @@ async function startScan(){
       checks:[
         {pass:hasReadme, label:hasReadme?'README documentation present':'No README missing project documentation', sev:'fail'},
         {pass:hasLicense, label:hasLicense?`License: ${repoData.license?.name||'present'}`:'No license file legal compliance gap', sev:'warn'},
-        {pass:hasSecurityMd, label:hasSecurityMd?'SECURITY.md vulnerability disclosure defined':'No security disclosure policy', sev:'warn'},
-        {pass:hasContributing, label:hasContributing?'CONTRIBUTING.md contribution guidelines defined':'No contribution guidelines', sev:'warn'},
+        {pass:hasSecurityMd, label:hasSecurityMd?'SECURITY.md: vulnerability disclosure policy':'No security disclosure policy', sev:'warn'},
+        {pass:hasContributing, label:hasContributing?'CONTRIBUTING.md: contribution guidelines':'No contribution guidelines', sev:'warn'},
         {pass:hasDesc, label:hasDesc?`Description: "${repoData.description?.substring(0,50)}${repoData.description?.length>50?'...':''}"`:'No repository description set', sev:'warn'},
         {pass:topicsList.length>0, label:topicsList.length>0?`Topics: ${topicsList.slice(0,4).join(', ')}`:'No repository topics reduces discoverability', sev:'warn'},
       ]
