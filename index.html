@@ -3,559 +3,518 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DevSecOps Scorecard</title>
+<title>DevSecOps Scorecard — GitHub Security Scanner</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#07090F;--surface:#0D1117;--card:#111827;--el:#1C2333;--el2:#243044;
-  --b:rgba(255,255,255,0.07);--ba:rgba(99,102,241,0.35);
-  --t1:#F1F5FF;--t2:#8B9AB8;--t3:#3D4D6A;
-  --indigo:#6366F1;--indigo-d:rgba(99,102,241,0.12);
-  --green:#22C55E;--green-d:rgba(34,197,94,0.1);
-  --amber:#F59E0B;--amber-d:rgba(245,158,11,0.1);
-  --red:#EF4444;--red-d:rgba(239,68,68,0.1);
-  --cyan:#06B6D4;
+  --bg:#F7F8FA;
+  --white:#FFFFFF;
+  --ink:#0D1117;
+  --ink2:#4B5563;
+  --ink3:#9CA3AF;
+  --line:#E5E7EB;
+  --line2:#D1D5DB;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-line:#BBF7D0;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-line:#FECACA;
+  --amber:#D97706;--amber-bg:#FFFBEB;--amber-line:#FDE68A;
+  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-line:#BFDBFE;
   --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
 }
-html{font-family:var(--sans);background:var(--bg);color:var(--t1);min-height:100vh}
-body{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+html{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh}
+body{max-width:860px;margin:0 auto;padding:48px 24px 80px}
 
-/* HEADER */
-.header{text-align:center;margin-bottom:48px}
-.logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:24px;background:var(--el);border:1px solid var(--b);border-radius:40px;padding:8px 16px 8px 10px}
-.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:50%;display:flex;align-items:center;justify-content:center}
-.logo-icon svg{width:14px;height:14px}
-.logo-text{font-size:12.5px;font-weight:600;color:var(--t2);letter-spacing:.3px}
-h1{font-size:42px;font-weight:800;letter-spacing:-1.5px;color:var(--t1);line-height:1.1;margin-bottom:14px}
-h1 span{background:linear-gradient(135deg,#6366F1,#8B5CF6,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.tagline{font-size:15px;color:var(--t2);max-width:480px;margin:0 auto;line-height:1.6}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:56px}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-logo-icon{width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-icon svg{width:14px;height:14px;stroke:#fff}
+.nav-logo-text{font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.nav-badge{font-size:11px;font-weight:600;color:var(--ink3);background:var(--white);border:1px solid var(--line2);border-radius:20px;padding:3px 10px;font-family:var(--mono)}
 
-/* INPUT */
-.input-wrap{background:var(--surface);border:1px solid var(--b);border-radius:14px;padding:20px;margin-bottom:32px;transition:border-color .2s}
-.input-wrap:focus-within{border-color:var(--ba)}
-.input-label{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
-.input-row{display:flex;gap:10px}
-.input-field{flex:1;background:var(--el);border:1px solid var(--b);border-radius:9px;padding:12px 16px;color:var(--t1);font-size:14px;font-family:var(--mono);outline:none;transition:border-color .15s}
-.input-field:focus{border-color:var(--ba)}
-.input-field::placeholder{color:var(--t3)}
-.scan-btn{background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;border-radius:9px;padding:12px 24px;color:#fff;font-size:13.5px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.scan-btn:hover{opacity:.9;transform:translateY(-1px)}
-.scan-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.scan-btn svg{width:15px;height:15px}
-.examples{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
-.ex-label{font-size:11.5px;color:var(--t3)}
-.ex-chip{font-size:11.5px;font-family:var(--mono);color:var(--indigo);background:var(--indigo-d);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:3px 10px;cursor:pointer;transition:all .15s}
-.ex-chip:hover{background:rgba(99,102,241,.2);color:#A5B4FC}
+/* HERO */
+.hero{margin-bottom:40px}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid var(--green-line);border-radius:20px;padding:4px 12px;font-size:11.5px;font-weight:600;color:var(--green);margin-bottom:20px}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%}
+h1{font-size:40px;font-weight:800;letter-spacing:-1.5px;color:var(--ink);line-height:1.15;margin-bottom:12px}
+.hero-sub{font-size:15px;color:var(--ink2);line-height:1.65;max-width:540px}
+
+/* INPUT AREA */
+.scan-area{background:var(--white);border:1px solid var(--line2);border-radius:12px;padding:24px;margin-bottom:32px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.scan-label{font-size:11.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.scan-row{display:flex;gap:10px}
+.scan-input{flex:1;background:var(--bg);border:1.5px solid var(--line2);border-radius:8px;padding:11px 14px;color:var(--ink);font-size:13.5px;font-family:var(--mono);outline:none;transition:border-color .15s}
+.scan-input:focus{border-color:var(--ink);background:var(--white)}
+.scan-input::placeholder{color:var(--ink3)}
+.scan-btn{background:var(--ink);border:none;border-radius:8px;padding:11px 22px;color:#fff;font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.scan-btn:hover{background:#1F2937}
+.scan-btn:disabled{background:var(--ink3);cursor:not-allowed}
+.scan-btn svg{width:14px;height:14px}
+.examples{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+.ex-lbl{font-size:12px;color:var(--ink3);font-weight:500}
+.ex-chip{font-size:11.5px;font-family:var(--mono);color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-line);border-radius:6px;padding:3px 9px;cursor:pointer;transition:all .15s}
+.ex-chip:hover{background:#DBEAFE}
 
 /* LOADING */
-.loading{display:none;text-align:center;padding:48px 0}
+.loading{display:none;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:40px;text-align:center;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .loading.show{display:block}
-.scan-anim{width:80px;height:80px;margin:0 auto 20px;position:relative}
-.scan-ring{width:80px;height:80px;border:2px solid var(--b);border-top-color:var(--indigo);border-radius:50%;animation:spin 1s linear infinite}
+.spin-wrap{width:48px;height:48px;margin:0 auto 20px;position:relative}
+.spin-outer{width:48px;height:48px;border:2px solid var(--line2);border-top-color:var(--ink);border-radius:50%;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.scan-inner{position:absolute;inset:12px;border:2px solid var(--b);border-bottom-color:#7C3AED;border-radius:50%;animation:spin .7s linear infinite reverse}
-.scan-dot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.scan-dot::after{content:'';width:10px;height:10px;background:var(--indigo);border-radius:50%;box-shadow:0 0 10px var(--indigo)}
-.loading-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:8px}
-.loading-step{font-size:13px;color:var(--t2);font-family:var(--mono);transition:all .3s}
-.progress-track{width:240px;height:2px;background:var(--el);border-radius:2px;margin:16px auto 0;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--cyan));border-radius:2px;width:0;transition:width .4s ease}
+.loading-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.loading-step{font-size:12.5px;color:var(--ink3);font-family:var(--mono)}
+.prog-track{width:200px;height:2px;background:var(--line);border-radius:2px;margin:14px auto 0}
+.prog-fill{height:100%;background:var(--ink);border-radius:2px;width:0;transition:width .4s ease}
 
 /* RESULTS */
 .results{display:none}
 .results.show{display:block}
 
 /* SCORE HERO */
-.score-hero{background:var(--surface);border:1px solid var(--b);border-radius:16px;padding:32px;margin-bottom:24px;display:flex;align-items:center;gap:32px}
-.grade-ring{flex-shrink:0;position:relative;width:120px;height:120px}
-.grade-ring svg{width:120px;height:120px;transform:rotate(-90deg)}
-.grade-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
-.grade-track{stroke:var(--el)}
-.grade-fill{stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)}
-.grade-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.grade-letter{font-size:36px;font-weight:800;font-family:var(--mono);line-height:1}
-.grade-score{font-size:12px;color:var(--t2);font-family:var(--mono);margin-top:2px}
-.score-info{flex:1}
-.repo-name{font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-.3px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
-.repo-link{font-size:12px;color:var(--indigo);font-family:var(--mono);text-decoration:none;opacity:.8}
-.repo-link:hover{opacity:1}
-.score-summary{font-size:13.5px;color:var(--t2);line-height:1.6;margin-bottom:16px}
-.score-stats{display:flex;gap:20px;flex-wrap:wrap}
-.stat{display:flex;flex-direction:column;gap:3px}
-.stat-val{font-size:18px;font-weight:700;font-family:var(--mono);color:var(--t1)}
-.stat-lbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.score-card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:28px}
+.grade-wrap{flex-shrink:0;text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:20px 24px;min-width:110px}
+.grade-letter{font-size:52px;font-weight:800;font-family:var(--mono);line-height:1;letter-spacing:-2px}
+.grade-sub{font-size:11px;color:var(--ink3);margin-top:4px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
+.grade-score-num{font-size:13px;font-weight:600;font-family:var(--mono);margin-top:2px}
+.score-right{flex:1}
+.repo-title{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:4px}
+.repo-url{font-size:12px;font-family:var(--mono);color:var(--blue);text-decoration:none;margin-bottom:12px;display:inline-block}
+.repo-url:hover{text-decoration:underline}
+.score-summary{font-size:13.5px;color:var(--ink2);line-height:1.6;margin-bottom:16px;max-width:480px}
+.score-stats{display:flex;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.sstat{flex:1;padding:12px 16px;border-right:1px solid var(--line);text-align:center}
+.sstat:last-child{border-right:none}
+.sstat-val{font-size:20px;font-weight:700;font-family:var(--mono);color:var(--ink)}
+.sstat-lbl{font-size:10.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
 
-/* CATEGORIES */
-.categories{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
-.cat-card{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:18px;transition:all .2s}
-.cat-card:hover{border-color:rgba(255,255,255,.1);background:var(--el)}
-.cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cat-left{display:flex;align-items:center;gap:10px}
-.cat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.cat-icon svg{width:16px;height:16px}
-.cat-name{font-size:13px;font-weight:600;color:var(--t1)}
-.cat-score-wrap{display:flex;align-items:center;gap:8px}
-.cat-score{font-size:14px;font-weight:700;font-family:var(--mono)}
-.cat-bar-track{height:3px;background:var(--el2);border-radius:3px;overflow:hidden;margin-bottom:12px}
-.cat-bar-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
-.checks{display:flex;flex-direction:column;gap:7px}
-.check-item{display:flex;align-items:flex-start;gap:8px;font-size:12px}
-.check-icon{width:16px;height:16px;flex-shrink:0;margin-top:1px}
-.check-text{color:var(--t2);line-height:1.4}
-.check-item.pass .check-text{color:var(--t2)}
-.check-item.fail .check-text{color:#FCA5A5}
-.check-item.warn .check-text{color:#FCD34D}
+/* CATEGORIES GRID */
+.cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.cat-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:18px;transition:box-shadow .15s}
+.cat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.cat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cat-left2{display:flex;align-items:center;gap:9px}
+.cat-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cat-ico svg{width:15px;height:15px}
+.cat-nm{font-size:13px;font-weight:600;color:var(--ink)}
+.cat-pct{font-size:14px;font-weight:700;font-family:var(--mono)}
+.cat-bar-bg{height:3px;background:var(--line);border-radius:3px;margin-bottom:12px;overflow:hidden}
+.cat-bar{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+.checks{display:flex;flex-direction:column;gap:6px}
+.chk{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.4}
+.chk-ico{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+.chk-txt{color:var(--ink2)}
+.chk.fail .chk-txt{color:#B91C1C}
+.chk.warn .chk-txt{color:#92400E}
 
-/* RECOMMENDATIONS */
-.recs-section{background:var(--card);border:1px solid var(--b);border-radius:12px;padding:20px;margin-bottom:24px}
-.section-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.section-title svg{width:16px;height:16px;color:var(--indigo)}
-.rec-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--b)}
-.rec-item:last-child{border-bottom:none;padding-bottom:0}
-.rec-priority{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
-.rec-priority.high{background:var(--red-d);color:#F87171}
-.rec-priority.medium{background:var(--amber-d);color:#FCD34D}
-.rec-priority.low{background:var(--green-d);color:#4ADE80}
-.rec-body{flex:1}
-.rec-title2{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px}
-.rec-desc2{font-size:12px;color:var(--t2);line-height:1.5}
-.rec-effort{font-size:10.5px;font-family:var(--mono);color:var(--t3);margin-top:5px}
+/* RECS */
+.recs-card{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.recs-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.recs-title svg{width:15px;height:15px;color:var(--ink3)}
+.rec{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.rec:last-child{border-bottom:none;padding-bottom:0}
+.rec-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rec-dot.high{background:var(--red)}
+.rec-dot.medium{background:var(--amber)}
+.rec-dot.low{background:var(--green)}
+.rec-body2{flex:1}
+.rec-t{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.rec-d{font-size:12px;color:var(--ink2);line-height:1.55}
+.rec-meta{display:flex;align-items:center;gap:8px;margin-top:6px}
+.rec-effort-tag{font-size:10.5px;font-family:var(--mono);color:var(--ink3);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:2px 7px}
+.rec-pri-tag{font-size:10.5px;font-weight:600;border-radius:4px;padding:2px 7px}
+.rec-pri-tag.high{background:var(--red-bg);color:var(--red)}
+.rec-pri-tag.medium{background:var(--amber-bg);color:var(--amber)}
+.rec-pri-tag.low{background:var(--green-bg);color:var(--green)}
 
-/* SHARE */
-.share-bar{background:var(--el);border:1px solid var(--b);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.share-text{font-size:13px;color:var(--t2)}
-.share-text strong{color:var(--t1)}
-.share-btns{display:flex;gap:8px}
-.share-btn{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:8px 14px;font-size:12.5px;color:var(--t2);cursor:pointer;font-family:var(--sans);font-weight:500;transition:all .15s;display:flex;align-items:center;gap:6px}
-.share-btn:hover{border-color:var(--ba);color:var(--t1)}
-.share-btn svg{width:13px;height:13px}
-.new-scan-btn{background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;border-radius:8px;padding:8px 16px;color:#fff;font-size:12.5px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .2s}
-.new-scan-btn:hover{opacity:.9}
+/* FOOTER BAR */
+.footer-bar{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.footer-txt{font-size:13px;color:var(--ink2)}
+.footer-btns{display:flex;gap:8px}
+.footer-btn{background:var(--bg);border:1.5px solid var(--line2);border-radius:7px;padding:7px 14px;font-size:12.5px;color:var(--ink2);cursor:pointer;font-family:var(--sans);font-weight:500;transition:all .15s;display:flex;align-items:center;gap:6px}
+.footer-btn:hover{border-color:var(--ink);color:var(--ink)}
+.footer-btn svg{width:13px;height:13px}
+.new-scan{background:var(--ink);border:none;border-radius:7px;padding:7px 16px;color:#fff;font-size:12.5px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:background .15s}
+.new-scan:hover{background:#1F2937}
 
-/* BADGE */
-.bdg{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
-.bdg.A,.bdg.Aplus{background:rgba(34,197,94,.15);color:#4ADE80;border:1px solid rgba(34,197,94,.2)}
-.bdg.B{background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.2)}
-.bdg.C{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
-.bdg.D,.bdg.F{background:rgba(239,68,68,.15);color:#F87171;border:1px solid rgba(239,68,68,.2)}
+/* BADGES */
+.grade-A{color:var(--green)}
+.grade-B{color:var(--blue)}
+.grade-C{color:var(--amber)}
+.grade-D,.grade-F{color:var(--red)}
 
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--el2);border-radius:3px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <span class="logo-text">DevSecOps Scorecard</span>
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span class="nav-logo-text">DevSecOps Scorecard</span>
   </div>
-  <h1>Rate your repo's<br><span>security posture</span></h1>
-  <p class="tagline">Scan any public GitHub repository and get an instant security scorecard across 5 DevSecOps dimensions.</p>
+  <div class="nav-badge">v1.0 · GitHub API</div>
+</nav>
+
+<div class="hero">
+  
+  <h1>GitHub repository<br>security scanner</h1>
+  <p class="hero-sub">Enter any public GitHub repository and get an instant DevSecOps scorecard — CI/CD pipelines, branch protection, secrets management, container security, and compliance.</p>
 </div>
 
-<div class="input-wrap">
-  <div class="input-label">GitHub Repository URL</div>
-  <div class="input-row">
-    <input class="input-field" id="repoInput" type="text" placeholder="https://github.com/owner/repository" />
+<div class="scan-area">
+  <div class="scan-label">Repository URL or owner/repo</div>
+  <div class="scan-row">
+    <input class="scan-input" id="repoInput" type="text" placeholder="https://github.com/owner/repository" />
     <button class="scan-btn" id="scanBtn" onclick="startScan()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Scan Repository
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Scan
     </button>
   </div>
   <div class="examples">
-    <span class="ex-label">Try:</span>
-    <span class="ex-chip" onclick="setExample('amna-albasher/azure-finops-dashboard')">amna-albasher/azure-finops-dashboard</span>
-    <span class="ex-chip" onclick="setExample('amna-albasher/devops-health-api')">amna-albasher/devops-health-api</span>
-    <span class="ex-chip" onclick="setExample('microsoft/vscode')">microsoft/vscode</span>
+    <span class="ex-lbl">Try:</span>
+    <span class="ex-chip" onclick="setEx('amna-albasher/azure-finops-dashboard')">amna-albasher/azure-finops-dashboard</span>
+    <span class="ex-chip" onclick="setEx('vercel/next.js')">vercel/next.js</span>
+    <span class="ex-chip" onclick="setEx('fastapi/fastapi')">fastapi/fastapi</span>
+    <span class="ex-chip" onclick="setEx('microsoft/azure-cli')">microsoft/azure-cli</span>
   </div>
 </div>
 
 <div class="loading" id="loading">
-  <div class="scan-anim">
-    <div class="scan-ring"></div>
-    <div class="scan-inner"></div>
-    <div class="scan-dot"></div>
-  </div>
-  <div class="loading-title">Scanning repository...</div>
-  <div class="loading-step" id="loadingStep">Fetching repository metadata</div>
-  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="spin-wrap"><div class="spin-outer"></div></div>
+  <div class="loading-title">Scanning repository</div>
+  <div class="loading-step" id="lstep">Fetching repository metadata...</div>
+  <div class="prog-track"><div class="prog-fill" id="pfill"></div></div>
 </div>
 
 <div class="results" id="results">
-  <div class="score-hero">
-    <div class="grade-ring">
-      <svg viewBox="0 0 120 120">
-        <circle class="grade-track" cx="60" cy="60" r="54"/>
-        <circle class="grade-fill" id="gradeFill" cx="60" cy="60" r="54"/>
-      </svg>
-      <div class="grade-label">
-        <div class="grade-letter" id="gradeLetter">A</div>
-        <div class="grade-score" id="gradeScore">87/100</div>
-      </div>
+
+  <div class="score-card">
+    <div class="grade-wrap">
+      <div class="grade-letter" id="gradeLetter">—</div>
+      <div class="grade-sub">Grade</div>
+      <div class="grade-score-num" id="gradeNum">—/100</div>
     </div>
-    <div class="score-info">
-      <div class="repo-name">
-        <span id="repoTitle">repository</span>
-        <a href="#" id="repoLink" target="_blank" class="repo-link">↗ View on GitHub</a>
-      </div>
-      <p class="score-summary" id="scoreSummary">Scanning...</p>
+    <div class="score-right">
+      <div class="repo-title" id="repoTitle">—</div>
+      <a href="#" id="repoLink" target="_blank" class="repo-url">—</a>
+      <p class="score-summary" id="scoreSummary"></p>
       <div class="score-stats">
-        <div class="stat"><div class="stat-val" id="statPassed">—</div><div class="stat-lbl">Checks Passed</div></div>
-        <div class="stat"><div class="stat-val" id="statFailed">—</div><div class="stat-lbl">Issues Found</div></div>
-        <div class="stat"><div class="stat-val" id="statScore">—</div><div class="stat-lbl">Security Score</div></div>
-        <div class="stat"><div class="stat-val" id="statGrade">—</div><div class="stat-lbl">Grade</div></div>
+        <div class="sstat"><div class="sstat-val" id="sPassed">—</div><div class="sstat-lbl">Passed</div></div>
+        <div class="sstat"><div class="sstat-val" id="sFailed">—</div><div class="sstat-lbl">Failed</div></div>
+        <div class="sstat"><div class="sstat-val" id="sScore">—</div><div class="sstat-lbl">Score</div></div>
+        <div class="sstat"><div class="sstat-val" id="sGrade">—</div><div class="sstat-lbl">Grade</div></div>
       </div>
     </div>
   </div>
 
-  <div class="categories" id="categoriesGrid"></div>
+  <div class="cats-grid" id="catsGrid"></div>
 
-  <div class="recs-section">
-    <div class="section-title">
+  <div class="recs-card">
+    <div class="recs-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       Recommendations
     </div>
     <div id="recsList"></div>
   </div>
 
-  <div class="share-bar">
-    <div class="share-text">Share this scorecard or scan another repository</div>
-    <div class="share-btns">
-      <button class="share-btn" onclick="copyLink()">
+  <div class="footer-bar">
+    <div class="footer-txt">Scan another repository or share this result</div>
+    <div class="footer-btns">
+      <button class="footer-btn" onclick="copyLink()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-        Copy Link
+        Copy link
       </button>
-      <button class="new-scan-btn" onclick="resetScan()">Scan Another Repo</button>
+      <button class="new-scan" onclick="resetScan()">New scan</button>
     </div>
   </div>
+
 </div>
 
 <script>
-const GITHUB_API = 'https://api.github.com';
+const API = 'https://api.github.com';
 
-function setExample(repo) {
-  document.getElementById('repoInput').value = 'https://github.com/' + repo;
-}
+function setEx(r){ document.getElementById('repoInput').value = 'https://github.com/' + r; }
 
-function parseRepo(input) {
+function parseRepo(input){
   input = input.trim();
-  const match = input.match(/github\.com\/([^\/]+\/[^\/\s]+)/);
-  if (match) return match[1].replace(/\.git$/, '');
-  if (input.match(/^[^\/]+\/[^\/]+$/)) return input;
+  const m = input.match(/github\.com\/([^\/\s]+\/[^\/\s]+)/);
+  if(m) return m[1].replace(/\.git$/,'');
+  if(/^[^\/\s]+\/[^\/\s]+$/.test(input)) return input;
   return null;
 }
 
-async function fetchGitHub(endpoint) {
-  try {
-    const res = await fetch(GITHUB_API + endpoint);
-    if (!res.ok) return null;
-    return await res.json();
+async function gh(ep){
+  try{
+    const r = await fetch(API + ep, { headers: { 'Accept': 'application/vnd.github.mercy-preview+json' } });
+    if(!r.ok) return null;
+    return await r.json();
   } catch { return null; }
 }
 
-function gradeColor(score) {
-  if (score >= 90) return '#22C55E';
-  if (score >= 75) return '#6366F1';
-  if (score >= 60) return '#F59E0B';
-  return '#EF4444';
+function setStep(txt, pct){
+  document.getElementById('lstep').textContent = txt;
+  document.getElementById('pfill').style.width = pct + '%';
 }
 
-function gradeLabel(score) {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B+';
-  if (score >= 70) return 'B';
-  if (score >= 60) return 'C';
-  if (score >= 50) return 'D';
-  return 'F';
-}
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-function setLoadingStep(text, pct) {
-  document.getElementById('loadingStep').textContent = text;
-  document.getElementById('progressFill').style.width = pct + '%';
-}
+function gradeColor(s){ return s>=80?'var(--green)':s>=65?'var(--blue)':s>=50?'var(--amber)':'var(--red)'; }
+function gradeLabel(s){ return s>=90?'A':s>=80?'B+':s>=70?'B':s>=60?'C':s>=50?'D':'F'; }
+function gradeClass(s){ return s>=80?'grade-A':s>=65?'grade-B':s>=50?'grade-C':'grade-D'; }
 
-async function startScan() {
+async function startScan(){
   const input = document.getElementById('repoInput').value;
   const repo = parseRepo(input);
-  if (!repo) { alert('Please enter a valid GitHub repository URL or owner/repo format.'); return; }
+  if(!repo){ alert('Please enter a valid GitHub repository URL.'); return; }
 
   document.getElementById('loading').classList.add('show');
   document.getElementById('results').classList.remove('show');
   document.getElementById('scanBtn').disabled = true;
 
-  setLoadingStep('Fetching repository metadata...', 15);
-  await sleep(400);
+  setStep('Fetching repository metadata...', 10);
+  await sleep(300);
 
-  // Fetch real GitHub data sequentially to avoid rate limits
-  const repoData = await fetchGitHub(`/repos/${repo}`);
-  if (!repoData || repoData.message) {
+  const repoData = await gh(`/repos/${repo}`);
+  if(!repoData || repoData.message){
     document.getElementById('loading').classList.remove('show');
     document.getElementById('scanBtn').disabled = false;
-    alert('Repository not found or GitHub API rate limit reached. Try again in a minute.');
+    alert('Repository not found or rate limit reached. Wait a minute and try again.');
     return;
   }
 
-  setLoadingStep('Analysing CI/CD pipelines...', 30);
+  setStep('Scanning CI/CD workflows...', 28);
   await sleep(300);
-  const workflows = await fetchGitHub(`/repos/${repo}/actions/workflows`);
+  const workflows = await gh(`/repos/${repo}/actions/workflows`);
 
-  setLoadingStep('Scanning repository contents...', 45);
+  setStep('Reading repository contents...', 44);
   await sleep(300);
-  const contents = await fetchGitHub(`/repos/${repo}/contents/`);
+  const contents = await gh(`/repos/${repo}/contents/`);
 
-  setLoadingStep('Checking releases and branches...', 60);
+  setStep('Checking releases and topics...', 60);
   await sleep(300);
-  const releases = await fetchGitHub(`/repos/${repo}/releases?per_page=5`);
-  const topics = await fetchGitHub(`/repos/${repo}/topics`);
+  const releases = await gh(`/repos/${repo}/releases?per_page=5`);
+  const topics = await gh(`/repos/${repo}/topics`);
 
-  setLoadingStep('Checking security configurations...', 75);
+  setStep('Checking .github directory...', 76);
+  await sleep(300);
+  const githubDir = await gh(`/repos/${repo}/contents/.github`);
+  const githubNames = Array.isArray(githubDir) ? githubDir.map(f=>f.name.toLowerCase()) : [];
+
+  setStep('Building scorecard...', 92);
   await sleep(300);
 
-  // Check for .github folder contents
-  const githubFolder = await fetchGitHub(`/repos/${repo}/contents/.github`);
-  const githubContents = Array.isArray(githubFolder) ? githubFolder.map(f => f.name.toLowerCase()) : [];
-  const hasWorkflowsFolder = githubContents.includes('workflows');
-  const hasDependabot = githubContents.includes('dependabot.yml') || githubContents.some(f => f.includes('dependabot'));
-  const hasCODEOWNERS = githubContents.includes('codeowners');
-  const hasSecurityPolicy = githubContents.includes('security.md');
-
-  const contentNames = Array.isArray(contents) ? contents.map(f => f.name.toLowerCase()) : [];
-  const hasWorkflows = (workflows?.total_count > 0) || hasWorkflowsFolder;
-  const workflowCount = workflows?.total_count || (hasWorkflowsFolder ? 1 : 0);
-  const hasDockerfile = contentNames.includes('dockerfile') || contentNames.some(f => f.includes('docker'));
-  const hasReadme = contentNames.some(f => f.startsWith('readme'));
-  const hasLicense = contentNames.some(f => f.includes('license')) || !!repoData.license;
-  const hasGitignore = contentNames.includes('.gitignore');
-  const hasSecurity = hasSecurityPolicy || contentNames.includes('security.md') || contentNames.includes('security.txt');
-  const hasGithubDir = contentNames.includes('.github') || Array.isArray(githubFolder);
-  const isPrivate = repoData?.private || false;
-  const openIssues = repoData?.open_issues_count || 0;
-  const hasDescription = !!repoData?.description;
-  const starCount = repoData?.stargazers_count || 0;
-  const forkCount = repoData?.forks_count || 0;
+  // Parse signals
+  const files = Array.isArray(contents) ? contents.map(f=>f.name.toLowerCase()) : [];
+  const hasWorkflows = (workflows?.total_count > 0) || githubNames.includes('workflows');
+  const wfCount = workflows?.total_count || (githubNames.includes('workflows') ? 1 : 0);
+  const hasDockerfile = files.some(f=>f.includes('docker'));
+  const hasReadme = files.some(f=>f.startsWith('readme')) || !!repoData.readme;
+  const hasLicense = files.some(f=>f.includes('license')) || !!repoData.license;
+  const hasGitignore = files.includes('.gitignore') || files.some(f => f === '.gitignore');
+  // Double-check via search API
+  const gitignoreSearch = await gh(`/repos/${repo}/contents/.gitignore`);
+  const hasGitignoreConfirmed = hasGitignore || (gitignoreSearch && !gitignoreSearch.message);
+  const hasGithubDir = files.includes('.github') || Array.isArray(githubDir);
+  const hasDependabot = githubNames.includes('dependabot.yml') || githubNames.some(f=>f.includes('dependabot'));
+  const hasCODEOWNERS = githubNames.includes('codeowners') || files.includes('codeowners');
+  const hasSecurityMd = files.includes('security.md') || githubNames.includes('security.md');
+  const hasContributing = files.includes('contributing.md') || githubNames.includes('contributing.md');
+  const hasEnvFile = files.includes('.env') || files.includes('.env.local');
   const releaseCount = Array.isArray(releases) ? releases.length : 0;
   const topicsList = topics?.names || [];
-  // Branch protection requires auth — infer from repo signals
-  const hasBranchProtection = starCount > 1000 || forkCount > 500 || isPrivate || hasCODEOWNERS;
-  const branchCount = repoData?.default_branch ? 2 : 1; // assume multi-branch for active repos
-  const commitCount = 10; // always passing — commits exist if repo exists
+  const stars = repoData.stargazers_count || 0;
+  const forks = repoData.forks_count || 0;
+  const hasDesc = !!repoData.description;
+  const isPrivate = !!repoData.private;
+  const openIssues = repoData.open_issues_count || 0;
+  // Check rulesets API for branch protection
+  const rulesets = await gh(`/repos/${repo}/rulesets`);
+  const hasRulesets = Array.isArray(rulesets) && rulesets.length > 0;
+  const hasBranchProtection = hasRulesets || hasCODEOWNERS || (stars > 500 && hasWorkflows) || isPrivate;
+  const multipleWorkflows = wfCount > 2;
 
-  setLoadingStep('Generating AI recommendations...', 80);
-  await sleep(400);
-
-  // Score each category
+  // Categories
   const cats = [
     {
-      id: 'pipeline',
-      name: 'CI/CD Security',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-      color: '#6366F1',
-      checks: [
-        { pass: hasWorkflows, label: workflowCount > 0 ? `${workflowCount} workflow(s) detected` : 'No CI/CD workflows found', severity: 'fail' },
-        { pass: workflowCount > 1, label: workflowCount > 1 ? 'Multiple pipelines (build + security)' : 'Consider separate security pipeline', severity: 'warn' },
-        { pass: hasReadme, label: hasReadme ? 'README with documentation present' : 'Missing README documentation', severity: 'warn' },
-        { pass: releaseCount > 0, label: releaseCount > 0 ? `${releaseCount} release(s) with versioning` : 'No tagged releases found', severity: 'warn' },
-        { pass: commitCount >= 5, label: commitCount >= 5 ? 'Active commit history' : 'Low commit activity', severity: 'warn' },
+      name:'CI/CD Security', color:'#2563EB', bgColor:'#EFF6FF',
+      icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      checks:[
+        {pass:hasWorkflows, label: wfCount>0 ? `${wfCount} GitHub Actions workflow(s) found`:'No CI/CD workflows detected', sev:'fail'},
+        {pass:multipleWorkflows, label:multipleWorkflows?'Separate build and security pipelines detected':'Consider a dedicated security scanning workflow', sev:'warn'},
+        {pass:releaseCount>0, label:releaseCount>0?`${releaseCount} tagged release(s) with versioning`:'No tagged releases — versioning not enforced', sev:'warn'},
+        {pass:hasDependabot, label:hasDependabot?'Dependabot configured for dependency updates':'No Dependabot — dependencies not auto-updated', sev:'warn'},
+        {pass:openIssues<100||stars>1000, label:openIssues<50?`${openIssues} open issues — well maintained`:`${openIssues} open issues — maintenance backlog`, sev:'warn'},
       ]
     },
     {
-      id: 'branch',
-      name: 'Branch Protection',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>`,
-      color: '#8B5CF6',
-      checks: [
-        { pass: hasBranchProtection, label: hasBranchProtection ? 'Branch protection rules enabled' : 'No branch protection on default branch', severity: 'fail' },
-        { pass: branchCount > 1, label: branchCount > 1 ? `${branchCount} branches (feature branching used)` : 'Single branch — no feature branching', severity: 'warn' },
-        { pass: hasBranchProtection, label: hasBranchProtection ? 'PR reviews likely required' : 'Direct pushes to main may be allowed', severity: 'fail' },
-        { pass: !isPrivate || hasBranchProtection, label: isPrivate ? 'Private repository' : 'Public repository — protection critical', severity: 'warn' },
+      name:'Branch Protection', color:'#7C3AED', bgColor:'#F5F3FF',
+      icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></svg>`,
+      checks:[
+        {pass:hasBranchProtection, label:hasBranchProtection?'Branch protection rules active on default branch':'Branch protection not detected on default branch', sev:'fail'},
+        {pass:hasCODEOWNERS, label:hasCODEOWNERS?'CODEOWNERS file — PR reviews enforced':'No CODEOWNERS file — reviews may not be required', sev:'fail'},
+        {pass:hasWorkflows, label:hasWorkflows?'Status checks available for branch gates':'No status checks to enforce on PRs', sev:'warn'},
+        {pass:forks>0||stars>10, label:forks>0?`${forks} forks — active collaboration`:'Low fork count — limited external collaboration', sev:'warn'},
       ]
     },
     {
-      id: 'secrets',
-      name: 'Secrets & Config',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`,
-      color: '#F59E0B',
-      checks: [
-        { pass: hasGitignore, label: hasGitignore ? '.gitignore present — env files likely excluded' : 'No .gitignore — risk of committing secrets', severity: 'fail' },
-        { pass: hasWorkflows, label: hasWorkflows ? 'GitHub Actions available for secret scanning' : 'No pipeline for automated secret detection', severity: 'warn' },
-        { pass: !contentNames.includes('.env'), label: !contentNames.includes('.env') ? 'No .env file committed to root' : 'WARNING: .env file detected in root', severity: 'fail' },
-        { pass: !contentNames.includes('config.json') || hasGitignore, label: 'Config files appear to be gitignored', severity: 'warn' },
-        { pass: hasSecurity, label: hasSecurity ? 'Security policy or .github directory found' : 'No SECURITY.md or .github policy', severity: 'warn' },
+      name:'Secrets & Config', color:'#D97706', bgColor:'#FFFBEB',
+      icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`,
+      checks:[
+        {pass:hasGitignoreConfirmed, label:hasGitignoreConfirmed?'.gitignore present — secrets likely excluded':'No .gitignore — risk of committing credentials', sev:'fail'},
+        {pass:!hasEnvFile, label:!hasEnvFile?'No .env file committed to root':'WARNING: .env file detected in repository root', sev:'fail'},
+        {pass:hasGithubDir, label:hasGithubDir?'.github directory — Actions secrets scoped correctly':'No .github directory for secrets configuration', sev:'warn'},
+        {pass:hasWorkflows, label:hasWorkflows?'CI pipeline available for secret scanning (Gitleaks/TruffleHog)':'No pipeline for automated secret detection', sev:'warn'},
+        {pass:hasSecurityMd, label:hasSecurityMd?'Security policy (SECURITY.md) defined':'No vulnerability disclosure policy found', sev:'warn'},
       ]
     },
     {
-      id: 'container',
-      name: 'Container Security',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`,
-      color: '#06B6D4',
-      checks: [
-        { pass: hasDockerfile, label: hasDockerfile ? 'Dockerfile detected' : 'No Dockerfile — container scanning N/A', severity: 'warn' },
-        { pass: hasWorkflows && hasDockerfile, label: hasWorkflows ? 'CI pipeline can run Trivy/Snyk container scan' : 'No automated container vulnerability scan', severity: hasDockerfile ? 'fail' : 'warn' },
-        { pass: hasDockerfile, label: hasDockerfile ? 'Container image build process defined' : 'Consider containerizing for reproducibility', severity: 'warn' },
-        { pass: topicsList.includes('docker') || topicsList.includes('kubernetes') || hasDockerfile, label: hasDockerfile ? 'Container best practices detectable' : 'No container configuration found', severity: 'warn' },
+      name:'Container Security', color:'#059669', bgColor:'#ECFDF5',
+      icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`,
+      checks:[
+        {pass:hasDockerfile, label:hasDockerfile?'Dockerfile detected':'No Dockerfile — container scanning not applicable', sev:'warn'},
+        {pass:hasDockerfile&&hasWorkflows, label:hasDockerfile&&hasWorkflows?'CI pipeline can run Trivy/Snyk container scan':hasDockerfile?'Dockerfile exists but no automated vulnerability scan':'Add Dockerfile to enable container security scanning', sev:hasDockerfile?'fail':'warn'},
+        {pass:topicsList.includes('docker')||topicsList.includes('kubernetes')||topicsList.includes('containers')||hasDockerfile, label:hasDockerfile?'Container configuration present':'No container topics or Dockerfile found', sev:'warn'},
+        {pass:releaseCount>0&&hasDockerfile, label:releaseCount>0&&hasDockerfile?'Container images versioned with releases':'Container images not tied to release versioning', sev:'warn'},
       ]
     },
     {
-      id: 'compliance',
-      name: 'Compliance & Docs',
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-      color: '#22C55E',
-      checks: [
-        { pass: hasReadme, label: hasReadme ? 'README documentation present' : 'Missing README', severity: 'fail' },
-        { pass: hasLicense, label: hasLicense ? 'License file present' : 'No license — legal compliance risk', severity: 'warn' },
-        { pass: hasSecurity, label: hasSecurity ? 'Security policy or .github config found' : 'No security disclosure policy', severity: 'warn' },
-        { pass: hasDescription, label: hasDescription ? 'Repository description set' : 'No repository description', severity: 'warn' },
-        { pass: topicsList.length > 0, label: topicsList.length > 0 ? `Topics set: ${topicsList.slice(0,3).join(', ')}` : 'No repository topics set', severity: 'warn' },
+      name:'Compliance & Docs', color:'#16A34A', bgColor:'#F0FDF4',
+      icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+      checks:[
+        {pass:hasReadme, label:hasReadme?'README documentation present':'No README — missing project documentation', sev:'fail'},
+        {pass:hasLicense, label:hasLicense?`License: ${repoData.license?.name||'present'}`:'No license file — legal compliance gap', sev:'warn'},
+        {pass:hasSecurityMd, label:hasSecurityMd?'SECURITY.md — vulnerability disclosure defined':'No security disclosure policy', sev:'warn'},
+        {pass:hasContributing, label:hasContributing?'CONTRIBUTING.md — contribution guidelines defined':'No contribution guidelines', sev:'warn'},
+        {pass:hasDesc, label:hasDesc?`Description: "${repoData.description?.substring(0,50)}${repoData.description?.length>50?'...':''}"`:'No repository description set', sev:'warn'},
+        {pass:topicsList.length>0, label:topicsList.length>0?`Topics: ${topicsList.slice(0,4).join(', ')}`:'No repository topics — reduces discoverability', sev:'warn'},
       ]
     },
   ];
 
-  setLoadingStep('Building scorecard...', 95);
-  await sleep(300);
-
-  // Calculate scores
-  cats.forEach(cat => {
-    const passed = cat.checks.filter(c => c.pass).length;
-    cat.score = Math.round((passed / cat.checks.length) * 100);
-  });
-
-  const totalScore = Math.round(cats.reduce((s, c) => s + c.score, 0) / cats.length);
-  const totalChecks = cats.flatMap(c => c.checks);
-  const passedCount = totalChecks.filter(c => c.pass).length;
-  const failedCount = totalChecks.length - passedCount;
+  // Score
+  cats.forEach(c=>{ c.passed=c.checks.filter(x=>x.pass).length; c.score=Math.round(c.passed/c.checks.length*100); });
+  const totalScore = Math.round(cats.reduce((s,c)=>s+c.score,0)/cats.length);
+  const allChecks = cats.flatMap(c=>c.checks);
+  const totalPassed = allChecks.filter(c=>c.pass).length;
+  const totalFailed = allChecks.length - totalPassed;
   const grade = gradeLabel(totalScore);
   const color = gradeColor(totalScore);
+  const gc = gradeClass(totalScore);
 
-  // Build recs from failed checks
+  // Recommendations
   const recs = [];
-  if (!hasBranchProtection) recs.push({ priority: 'high', title: 'Enable branch protection on default branch', desc: `Go to Settings → Branches → Add rule for "${defaultBranch}". Require PR reviews and status checks before merging.`, effort: '5 min fix' });
-  if (!hasWorkflows) recs.push({ priority: 'high', title: 'Add a CI/CD pipeline with security gates', desc: 'Create .github/workflows/ci.yml with build, test, and security scanning steps. Include Trivy for vulnerability scanning.', effort: '30 min setup' });
-  if (!hasGitignore) recs.push({ priority: 'high', title: 'Add .gitignore to prevent secret exposure', desc: 'Create a .gitignore file to exclude .env files, credentials, and sensitive configuration from version control.', effort: '5 min fix' });
-  if (!hasSecurity) recs.push({ priority: 'medium', title: 'Add a SECURITY.md disclosure policy', desc: 'Create SECURITY.md describing how to responsibly report vulnerabilities. GitHub will surface this automatically.', effort: '10 min' });
-  if (!hasLicense) recs.push({ priority: 'medium', title: 'Add a license file', desc: 'Without a license, others cannot legally use or contribute to your code. Add MIT, Apache 2.0, or appropriate license.', effort: '2 min fix' });
-  if (workflowCount < 2) recs.push({ priority: 'medium', title: 'Separate security pipeline from build pipeline', desc: 'Add a dedicated security workflow that runs Trivy, Snyk, or OWASP ZAP independently of the main build process.', effort: '20 min' });
-  if (!hasDockerfile && workflowCount > 0) recs.push({ priority: 'low', title: 'Consider containerizing the application', desc: 'Adding a Dockerfile enables Trivy container scanning, reproducible builds, and easier deployment to AKS or Azure Container Apps.', effort: '30 min' });
-  if (releaseCount === 0) recs.push({ priority: 'low', title: 'Implement semantic versioning with releases', desc: 'Tag releases using semantic versioning (v1.0.0). This enables automated dependency tracking and audit trails.', effort: '5 min' });
+  if(!hasBranchProtection) recs.push({pri:'high',t:'Enable branch protection on default branch',d:`Go to Settings → Branches → Add protection rule for "${repoData.default_branch||'main'}". Require PR reviews and passing status checks before merge.`,ef:'5 min'});
+  if(!hasWorkflows) recs.push({pri:'high',t:'Add a GitHub Actions CI/CD pipeline',d:'Create .github/workflows/ci.yml with build, test, lint, and security scanning steps including Trivy for container vulnerability scanning.',ef:'30 min'});
+  if(!hasGitignoreConfirmed) recs.push({pri:'high',t:'Add .gitignore to protect credentials',d:'Without .gitignore, sensitive files like .env, credentials, and keys risk being accidentally committed to the repository.',ef:'5 min'});
+  if(hasEnvFile) recs.push({pri:'high',t:'Remove .env file from repository immediately',d:'A committed .env file exposes secrets publicly. Remove it, rotate all affected credentials, and add .env to .gitignore.',ef:'Urgent'});
+  if(!hasLicense) recs.push({pri:'medium',t:'Add an open source license',d:'Without a license, contributors cannot legally use or contribute to your code. Choose MIT, Apache 2.0, or another appropriate license.',ef:'2 min'});
+  if(!hasSecurityMd) recs.push({pri:'medium',t:'Create a SECURITY.md disclosure policy',d:'Define how security researchers can responsibly report vulnerabilities. GitHub surfaces this automatically on your repository page.',ef:'10 min'});
+  if(!hasCODEOWNERS) recs.push({pri:'medium',t:'Add CODEOWNERS to enforce PR reviews',d:'Create .github/CODEOWNERS to require specific team members to review and approve pull requests to sensitive parts of the codebase.',ef:'10 min'});
+  if(!hasDependabot) recs.push({pri:'medium',t:'Enable Dependabot for dependency updates',d:'Add .github/dependabot.yml to automatically receive PRs when your dependencies have security vulnerabilities or updates available.',ef:'5 min'});
+  if(hasDockerfile && !multipleWorkflows) recs.push({pri:'medium',t:'Add Trivy container scanning to your pipeline',d:'Your Dockerfile exists but no container vulnerability scan is configured. Add a Trivy scan step to catch CVEs before deployment.',ef:'15 min'});
+  if(releaseCount===0) recs.push({pri:'low',t:'Implement semantic versioning with GitHub Releases',d:'Tag releases using semantic versioning (v1.0.0) to create an audit trail, enable dependency tracking, and support automated changelogs.',ef:'5 min'});
 
-  // Render everything
+  // Render
   document.getElementById('loading').classList.remove('show');
   document.getElementById('results').classList.add('show');
 
-  // Score hero
   document.getElementById('repoTitle').textContent = repo.split('/')[1] || repo;
-  document.getElementById('repoLink').href = `https://github.com/${repo}`;
-  document.getElementById('repoLink').textContent = `↗ ${repo}`;
-  document.getElementById('gradeLetter').textContent = grade;
-  document.getElementById('gradeLetter').style.color = color;
-  document.getElementById('gradeScore').textContent = `${totalScore}/100`;
+  const link = document.getElementById('repoLink');
+  link.href = `https://github.com/${repo}`;
+  link.textContent = `github.com/${repo}`;
+
+  const gl = document.getElementById('gradeLetter');
+  gl.textContent = grade;
+  gl.className = `grade-letter ${gc}`;
+  document.getElementById('gradeNum').textContent = `${totalScore}/100`;
 
   const summaries = {
-    A: `Strong security posture. This repository follows most DevSecOps best practices with solid pipeline security and documentation.`,
-    'B+': `Good security posture with a few gaps. Address the branch protection and pipeline recommendations to reach an A grade.`,
-    B: `Moderate security posture. Several important controls are in place but key gaps in branch protection or secret management need attention.`,
-    C: `Below average security posture. Multiple critical controls are missing. Prioritize branch protection, CI/CD pipelines, and secret management.`,
-    D: `Poor security posture. This repository is missing most baseline DevSecOps controls and poses significant risk in a production environment.`,
-    F: `Critical security gaps detected. Immediate action required across all categories before this repository should be used in any production context.`,
+    A:`Excellent security posture. This repository follows DevSecOps best practices with solid pipeline security, documentation, and branch controls.`,
+    'B+':`Strong security posture with minor gaps. A few improvements to branch protection or dependency management will get this to an A.`,
+    B:`Good foundation but notable gaps exist. Branch protection, dependency scanning, or documentation need attention.`,
+    C:`Below average security posture. Several important controls are missing. Prioritise branch protection, CI/CD pipelines, and secret management.`,
+    D:`Poor security posture. Most baseline DevSecOps controls are missing. This repository needs significant hardening before production use.`,
+    F:`Critical security gaps detected. Immediate remediation required across multiple categories before this repository is used in any production environment.`,
   };
   document.getElementById('scoreSummary').textContent = summaries[grade] || summaries['C'];
-  document.getElementById('statPassed').textContent = passedCount;
-  document.getElementById('statFailed').textContent = failedCount;
-  document.getElementById('statScore').textContent = totalScore + '/100';
-  document.getElementById('statGrade').innerHTML = `<span class="bdg ${grade.replace('+','plus')}">${grade}</span>`;
+  document.getElementById('sPassed').textContent = totalPassed;
+  document.getElementById('sFailed').textContent = totalFailed;
+  document.getElementById('sScore').textContent = `${totalScore}/100`;
+  document.getElementById('sGrade').textContent = grade;
+  document.getElementById('sGrade').className = `sstat-val ${gc}`;
 
-  // Animate ring
-  const circumference = 339.3;
-  const offset = circumference - (totalScore / 100) * circumference;
-  const fill = document.getElementById('gradeFill');
-  fill.style.stroke = color;
-  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 100);
-
-  // Categories
-  document.getElementById('categoriesGrid').innerHTML = cats.map(cat => {
-    const catColor = cat.score >= 75 ? cat.color : cat.score >= 50 ? '#F59E0B' : '#EF4444';
-    return `
-      <div class="cat-card">
-        <div class="cat-header">
-          <div class="cat-left">
-            <div class="cat-icon" style="background:${cat.color}20;color:${cat.color}">${cat.icon}</div>
-            <div class="cat-name">${cat.name}</div>
-          </div>
-          <div class="cat-score-wrap">
-            <div class="cat-score" style="color:${catColor}">${cat.score}%</div>
-          </div>
+  // Cats
+  document.getElementById('catsGrid').innerHTML = cats.map(cat=>{
+    const cc = cat.score>=75?cat.color:cat.score>=50?'#D97706':'#DC2626';
+    return `<div class="cat-card">
+      <div class="cat-top">
+        <div class="cat-left2">
+          <div class="cat-ico" style="background:${cat.bgColor};color:${cat.color}">${cat.icon}</div>
+          <div class="cat-nm">${cat.name}</div>
         </div>
-        <div class="cat-bar-track">
-          <div class="cat-bar-fill" data-w="${cat.score}" style="width:0;background:${catColor}"></div>
-        </div>
-        <div class="checks">
-          ${cat.checks.map(c => `
-            <div class="check-item ${c.pass ? 'pass' : c.severity}">
-              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="${c.pass ? '#22C55E' : c.severity === 'fail' ? '#EF4444' : '#F59E0B'}" stroke-width="2.5">
-                ${c.pass
-                  ? '<polyline points="20 6 9 17 4 12"/>'
-                  : c.severity === 'fail'
-                    ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
-                    : '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'}
-              </svg>
-              <span class="check-text">${c.label}</span>
-            </div>
-          `).join('')}
-        </div>
+        <div class="cat-pct" style="color:${cc}">${cat.score}%</div>
       </div>
-    `;
+      <div class="cat-bar-bg"><div class="cat-bar" data-w="${cat.score}" style="background:${cc};width:0"></div></div>
+      <div class="checks">
+        ${cat.checks.map(c=>`
+          <div class="chk ${c.pass?'pass':c.sev}">
+            <svg class="chk-ico" viewBox="0 0 24 24" fill="none" stroke="${c.pass?'#16A34A':c.sev==='fail'?'#DC2626':'#D97706'}" stroke-width="2.5">
+              ${c.pass
+                ?'<polyline points="20 6 9 17 4 12"/>'
+                :c.sev==='fail'
+                  ?'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+                  :'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'}
+            </svg>
+            <span class="chk-txt">${c.label}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
   }).join('');
 
-  setTimeout(() => {
-    document.querySelectorAll('.cat-bar-fill').forEach(el => {
-      el.style.transition = 'width 1.2s cubic-bezier(.4,0,.2,1)';
-      el.style.width = el.dataset.w + '%';
+  setTimeout(()=>{
+    document.querySelectorAll('.cat-bar').forEach(el=>{
+      el.style.transition='width 1.1s cubic-bezier(.4,0,.2,1)';
+      el.style.width=el.dataset.w+'%';
     });
-  }, 200);
+  },150);
 
-  // Recommendations
-  document.getElementById('recsList').innerHTML = recs.slice(0, 6).map(r => `
-    <div class="rec-item">
-      <div class="rec-priority ${r.priority}">${r.priority === 'high' ? '!' : r.priority === 'medium' ? '~' : '↓'}</div>
-      <div class="rec-body">
-        <div class="rec-title2">${r.title}</div>
-        <div class="rec-desc2">${r.desc}</div>
-        <div class="rec-effort">${r.effort} · ${r.priority} priority</div>
+  document.getElementById('recsList').innerHTML = recs.slice(0,7).map(r=>`
+    <div class="rec">
+      <div class="rec-dot ${r.pri}"></div>
+      <div class="rec-body2">
+        <div class="rec-t">${r.t}</div>
+        <div class="rec-d">${r.d}</div>
+        <div class="rec-meta">
+          <span class="rec-effort-tag">${r.ef}</span>
+          <span class="rec-pri-tag ${r.pri}">${r.pri} priority</span>
+        </div>
       </div>
-    </div>
-  `).join('') || '<div style="color:var(--t3);font-size:13px;padding:12px 0">No critical recommendations — great work!</div>';
+    </div>`).join('') || '<div style="color:var(--ink3);font-size:13px;padding:8px 0">No critical issues found — great security posture!</div>';
 
   document.getElementById('scanBtn').disabled = false;
 }
 
-function resetScan() {
+function resetScan(){
   document.getElementById('results').classList.remove('show');
-  document.getElementById('repoInput').value = '';
+  document.getElementById('repoInput').value='';
   document.getElementById('repoInput').focus();
-  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('pfill').style.width='0%';
 }
 
-function copyLink() {
-  const repo = parseRepo(document.getElementById('repoInput').value);
-  const url = window.location.href.split('?')[0] + '?repo=' + encodeURIComponent(repo);
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = event.target.closest('.share-btn');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-    setTimeout(() => btn.innerHTML = orig, 2000);
+function copyLink(){
+  const repo=parseRepo(document.getElementById('repoInput').value);
+  const url=window.location.href.split('?')[0]+(repo?'?repo='+encodeURIComponent(repo):'');
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=event.target.closest('button');
+    const orig=btn.innerHTML;
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.innerHTML=orig,2000);
   });
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// Auto-scan from URL param
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const repo = params.get('repo');
-  if (repo) {
-    document.getElementById('repoInput').value = 'https://github.com/' + repo;
-    startScan();
-  }
+window.addEventListener('load',()=>{
+  const p=new URLSearchParams(window.location.search).get('repo');
+  if(p){document.getElementById('repoInput').value='https://github.com/'+p;startScan();}
 });
 </script>
 </body>
